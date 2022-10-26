@@ -7,7 +7,9 @@ DOMAIN = 'stei.itb.ac.id'
 GREAT_LIST = []
 EMAIL = []
 WHATSAPP = []
+FILES = {}
 TIMEOUT = 15
+
 
 def in_domain(link,domain=DOMAIN):
     try:
@@ -43,9 +45,14 @@ def get_children(f,url=HOME_URL):
                 #children[DOMAIN].append(a_href)
                 GREAT_LIST.append(a_href)
             elif a_href.startswith('mailto:'):
-                EMAIL.append(a_href)
+                if a_href not in EMAIL:
+                    EMAIL.append(a_href)
             elif 'api.whatsapp.com' in a_href:
-                WHATSAPP.append(a_href)
+                if a_href not in WHATSAPP:
+                    WHATSAPP.append(a_href)
+            elif a_href[-1] != '/' and ('.' in a_href.split('/')[-1]):
+                if a_href not in FILES:
+                    FILES.append(a_href)
             elif in_domain(a_href,DOMAIN):
                 if a_href != url and a_href not in GREAT_LIST:
                     f.write(a_href+'\n')

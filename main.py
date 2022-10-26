@@ -5,6 +5,9 @@ import time
 HOME_URL = 'https://stei.itb.ac.id/'
 DOMAIN = 'stei.itb.ac.id'
 GREAT_LIST = []
+EMAIL = []
+WHATSAPP = []
+
 
 def in_domain(link,domain=DOMAIN):
     try:
@@ -26,9 +29,7 @@ def has_href(a):
         return a['href']
     except: return None
 
-def get_children(f,url):
-    children = {}
-    children[DOMAIN] = []
+def get_children(f,url=HOME_URL):
     html = requests.get(url).content
     soup = bs(html,'html.parser')
     a_soup = soup.find_all('a')
@@ -39,7 +40,12 @@ def get_children(f,url):
                 continue
             elif a_href.startswith('/'):
                 a_href = 'https://'+DOMAIN+a_href
-                children[DOMAIN].append(a_href)
+                #children[DOMAIN].append(a_href)
+                GREAT_LIST.append(a_href)
+            elif a_href.startswith('mailto:'):
+                EMAIL.append(a_href)
+            elif 'api.whatsapp.com' in a_href:
+                WHATSAPP.append(a_href)
             elif in_domain(a_href,DOMAIN):
                 if a_href != url and a_href not in GREAT_LIST:
                     f.write(a_href+'\n')
@@ -48,16 +54,20 @@ def get_children(f,url):
                     get_children(f,a_href)
    
         except:continue
-    #input()
-    print(f'Parent: {url}')
-    for child in children[DOMAIN]:
-        print(f'\t{child}')
-    return children[DOMAIN]
     
-def scrape2(f, url=HOME_URL):
+def scrape2(f,url=HOME_URL):
     get_children(f,url)
         
     
 if __name__ == '__main__':
-    with open('scrape-stei.log','a') as f:
-        scrape2(f, HOME_URL)
+    with open('scrape-links-stei.log','a') as f:
+        scrape2(f,url=HOME_URL)
+    
+    with open('scrape-email-stei.log','a') as f:
+        for e in EMAIL:
+            f.write(e+'\n')
+
+    with open('scrape-whatsapp-stei.log','a') as f:
+        for w in WHATSAPP:
+            f.write(w+'\n')
+        

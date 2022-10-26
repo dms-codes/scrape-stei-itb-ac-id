@@ -7,7 +7,7 @@ DOMAIN = 'stei.itb.ac.id'
 GREAT_LIST = []
 EMAIL = []
 WHATSAPP = []
-
+TIMEOUT = 15
 
 def in_domain(link,domain=DOMAIN):
     try:
@@ -30,7 +30,7 @@ def has_href(a):
     except: return None
 
 def get_children(f,url=HOME_URL):
-    html = requests.get(url).content
+    html = requests.get(url,timeout=TIMEOUT).content
     soup = bs(html,'html.parser')
     a_soup = soup.find_all('a')
     for a in a_soup:
